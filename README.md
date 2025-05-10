@@ -57,10 +57,10 @@
 ### A: GitHub does offer that, although you need a GitHub Enterprise account, which costs money, so it's easier to ask people to not.
 
 # Informational links
-[How Odometry Works 5225A](https://blog.jloh02.dev/robotics/odometry/)
-[Pros Documentation](https://pros.cs.purdue.edu/v5/index.html#)
-[lemlib Documentation](https://lemlib.readthedocs.io/en/stable/index.html)
-[EZ-Tempalte; EZ-Robotics Documentation](https://ez-robotics.github.io/EZ-Template/)
+- [How Odometry Works 5225A](https://blog.jloh02.dev/robotics/odometry/)
+- [Pros Documentation](https://pros.cs.purdue.edu/v5/index.html#)
+- [lemlib Documentation](https://lemlib.readthedocs.io/en/stable/index.html)
+- [EZ-Tempalte; EZ-Robotics Documentation](https://ez-robotics.github.io/EZ-Template/)
 
 # Installing Necessary Programming Software
 - Launch Powershell-x86
