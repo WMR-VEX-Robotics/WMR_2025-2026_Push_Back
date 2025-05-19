@@ -3,7 +3,7 @@
 # NOTICE: Please Commit Changes To Your Teams Branches
 
 # Useful Links:
-- [Push Back Manual](https://www.vexrobotics.com/documentation-release)
+- [Push Back Manual](https://content.vexrobotics.com/docs/25-26/v5rc-push-back/docs/PushBack-GameManual-0.1.pdf)
 - [Parts Order Form](https://docs.google.com/forms/d/e/1FAIpQLSeFg_zleeqHIRU9lrxiFkXbjZgg2E67jKUJd5AkV_R5zo71jg/viewform?pli=1)
 - [Team Merch Order Form](https://docs.google.com/forms/d/e/1FAIpQLSdxR6KkjUQ6A4ZKhxE1QsEypBgxBPV9mEK-Zm8SP0OPMLcKdg/viewform)
 - [VEX Official Q&A](https://www.robotevents.com/VRC/2023-2024/QA)
