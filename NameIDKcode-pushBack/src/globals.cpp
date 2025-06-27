@@ -7,23 +7,23 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({-12, -20, -19},pros::MotorGearset::blue); // left motor group 
-pros::MotorGroup rightMotors({5, 10, 11}, pros::MotorGearset::blue); // right motor group
+pros::MotorGroup leftMotors({-18, -20, -19},pros::MotorGearset::blue); // left motor group 
+pros::MotorGroup rightMotors({13, 12, 11}, pros::MotorGearset::blue); // right motor group
 
 //motors
-pros::MotorGroup intakeMotor({-4, 13}, pros::v5::MotorGearset::green);
-pros::Motor wsMotor(-17, pros::v5::MotorGears::green);
+pros::Motor intakeMotor(9, pros::v5::MotorGearset::blue);
+pros::Motor liftMotor(7, pros::v5::MotorGears::red);
 
 //pneumatics
-pros::adi::Pneumatics solenoidClamp('F', true);
-pros::adi::Pneumatics solenoidColorSort('E', false);
-pros::adi::Pneumatics solenoidHang('G', false);
+pros::adi::Pneumatics pto('D', false);
+pros::adi::Pneumatics odom('E', false);
+pros::adi::Pneumatics pusher('F', false);
 
 // Inertial Sensor on port 9
-pros::Imu imu(9);
+pros::Imu imu(7);
 
 //Color Sensor 
 pros::Optical colorSensor(2);
 
 //distance sensor
-pros::Distance distanceSensor(14);
+pros::Distance distanceSensor(12);

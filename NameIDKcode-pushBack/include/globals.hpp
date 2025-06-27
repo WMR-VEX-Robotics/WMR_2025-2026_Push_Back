@@ -13,13 +13,13 @@ extern pros::MotorGroup leftMotors; // left motor group
 extern pros::MotorGroup rightMotors; // right motor group 
 
 //motors
-extern pros::MotorGroup intakeMotor;
-extern pros::Motor wsMotor;
+extern pros::Motor intakeMotor;
+extern pros::Motor liftMotor;
 
 //pneumatics
-extern pros::adi::Pneumatics solenoidClamp;
-extern pros::adi::Pneumatics solenoidColorSort;
-extern pros::adi::Pneumatics solenoidHang;
+extern pros::adi::Pneumatics pto;
+extern pros::adi::Pneumatics odom;
+extern pros::adi::Pneumatics pusher;
 
 // Inertial Sensor
 extern pros::Imu imu;

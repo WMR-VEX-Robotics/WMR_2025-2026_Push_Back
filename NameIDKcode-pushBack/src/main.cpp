@@ -9,9 +9,9 @@
 
 
 // horizontal tracking wheel encoder
-pros::Rotation horizontal_encoder(18);
+pros::Rotation horizontal_encoder(1);
 // vertical tracking wheel encoder
-pros::Rotation vertical_encoder(16);
+pros::Rotation vertical_encoder(3);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -3);
 // vertical tracking wheel
@@ -138,6 +138,33 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 #pragma region autonomous
 
+void toggle_odom(){                  //odomLift 
+  if(odom.is_extended()){
+    odom.retract();
+  }
+  else{
+    odom.extend();
+  }
+}
+
+void toggle_pusher(){                  //pusher
+  if(pusher.is_extended()){
+    pusher.retract();
+  }
+  else{
+    pusher.extend();
+  }
+}
+
+void toggle_pto(){                  //pto
+  if(pto.is_extended()){
+    pto.retract();
+  }
+  else{
+    pto.extend();
+  }
+}
+
 /**
  * Runs during auto
  *
@@ -163,10 +190,16 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
-    wsMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     // loop to continuously update motors
 
     while (true) {
+
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+            toggle_odom();
+        } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+            toggle_pusher();
+        }
         
 
         // get joystick positions
@@ -174,6 +207,21 @@ void opcontrol() {
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
         chassis.arcade(leftY, rightX);
+
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+            intakeMotor.move(127);
+        } else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            intakeMotor.move(-127);
+        } else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+            liftMotor.move(127);
+        } else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+            liftMotor.move(-127);
+        } else {
+            intakeMotor.move(0);
+            liftMotor.move(0);
+        }
+
+        
 
         
 
