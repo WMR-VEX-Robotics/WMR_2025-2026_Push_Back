@@ -9,47 +9,45 @@
 
 
 // horizontal tracking wheel encoder
-pros::Rotation horizontal_encoder(1);
+pros::Rotation horizontal_encoder(16);
 // vertical tracking wheel encoder
-pros::Rotation vertical_encoder(3);
+pros::Rotation vertical_encoder(-14);
 // horizontal tracking wheel
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -3);
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -7);
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0.083);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -0.375);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              13.75, // 10 inch track width
+                              12.75, // 12.75 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 4" omnis
-                              360, // drivetrain rpm is 360
-                              8 // horizontal drift is 2. If we had traction wheels, it would have been 8
+                              450, // drivetrain rpm is 360
+                              2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
 
-// lateral motion controller
-lemlib::ControllerSettings linearController(
-    6.8,  // slightly lower kP
-    0,    
-    9,    
-    3,
-    1,
-    250,
-    3,
-    500,
-    30  // softer acceleration
+// lateral PID controller
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
 );
 
-// angular motion controller
-lemlib::ControllerSettings angularController(
-    3.8,   // ↓ kP to reduce aggressive turning
-    0.0,   // Remove kI (not useful here unless you see drift)
-    30,    // ↑ kD slightly to add more braking/damping
-    2,     // anti-windup lower (I is gone)
-    2,     // keep tighter small error range
-    700,   // faster settling time
-    5,     // slightly tighter large error range
-    900,   // slightly faster large error timeout
-    35     // slightly softer slew for smoother approach
+// angular PID controller
+lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in degrees
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in degrees
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 
 // sensors for odometry
@@ -73,7 +71,7 @@ lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
 );
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
+lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttleCurve, &steerCurve);
 
 #pragma endregion ChassisBuild
 #pragma region intilization 
@@ -91,7 +89,7 @@ void initialize() {
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
-    // lemlib::bufferedStdout().setRate(...);
+    // lemlib::bufferedStdout().setRate(10);
     // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
 
     // for more information on how the formatting for the loggers
@@ -110,6 +108,7 @@ void initialize() {
             pros::delay(50);
         }
     });
+    
 }
 
 #pragma endregion intilization 
@@ -120,14 +119,14 @@ void initialize() {
  * Runs while the robot is disabled
  */
 void disabled() {
-	
+  
 }
 
 /**
  * runs after initialize if the robot is connected to field control
  */
 void competition_initialize() {
-
+  initialize();
 }
 
 // get a path used for pure pursuit
@@ -177,8 +176,11 @@ void toggle_pto(){                  //pto
 
 #pragma region autoncallback
 
+
+
 void autonomous() {
     
+    chassis.turnToHeading(90, 2999);
 }
 
 #pragma endregion autoncallback
@@ -190,7 +192,7 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
-    liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     // loop to continuously update motors
 
     while (true) {

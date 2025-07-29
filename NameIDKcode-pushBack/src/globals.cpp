@@ -11,19 +11,19 @@ pros::MotorGroup leftMotors({-18, -20, -19},pros::MotorGearset::blue); // left m
 pros::MotorGroup rightMotors({13, 12, 11}, pros::MotorGearset::blue); // right motor group
 
 //motors
-pros::Motor intakeMotor(9, pros::v5::MotorGearset::blue);
+pros::Motor intakeMotor(10, pros::v5::MotorGearset::blue);
 pros::Motor liftMotor(7, pros::v5::MotorGears::red);
 
 //pneumatics
-pros::adi::Pneumatics pto('D', false);
-pros::adi::Pneumatics odom('E', false);
-pros::adi::Pneumatics pusher('F', false);
+pros::adi::Pneumatics odom('D', true);
+pros::adi::Pneumatics pto('E', false);
+pros::adi::Pneumatics pusher('F', true);
 
-// Inertial Sensor on port 9
-pros::Imu imu(7);
+// Inertial Sensor on port 17
+pros::Imu imu(17);
 
 //Color Sensor 
-pros::Optical colorSensor(2);
+//pros::Optical colorSensor(2);
 
 //distance sensor
-pros::Distance distanceSensor(12);
+//pros::Distance distanceSensor(12);
