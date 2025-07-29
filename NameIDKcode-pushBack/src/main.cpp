@@ -192,7 +192,7 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
-    liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     // loop to continuously update motors
 
     while (true) {
