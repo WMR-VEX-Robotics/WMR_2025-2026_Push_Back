@@ -84,27 +84,18 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate(); // calibrate sensors
-    chassis.setPose(0, 0, 0);
+    // Only calibrate here if NOT using competition control
+    // chassis.calibrate();
+    // Wait for IMU to finish calibrating if you calibrate here
+    // while (imu.is_calibrating()) pros::delay(10);
+    // chassis.setPose(0, 0, 0);
 
-    // the default rate is 50. however, if you need to change the rate, you
-    // can do the following.
-    // lemlib::bufferedStdout().setRate(10);
-    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
-
-    // for more information on how the formatting for the loggers
-    // works, refer to the fmtlib docs
-
-    // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
         while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // log position telemetry
+            pros::lcd::print(0, "X: %f", chassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-            // delay to save resources
             pros::delay(50);
         }
     });
@@ -126,7 +117,11 @@ void disabled() {
  * runs after initialize if the robot is connected to field control
  */
 void competition_initialize() {
-  initialize();
+  pros::lcd::initialize();
+  chassis.calibrate(); // recalibrate sensors
+  // Wait for IMU to finish calibrating
+  while (imu.is_calibrating()) pros::delay(10);
+  chassis.setPose(0, 0, 0); // reset odometry
 }
 
 // get a path used for pure pursuit
@@ -176,11 +171,104 @@ void toggle_pto(){                  //pto
 
 #pragma region autoncallback
 
+void redLeft() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(0, 22.5, 0, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.moveToPose(0, 36, 0, 3000, {.forwards = true, .maxSpeed = 70}, false);
+  chassis.turnToHeading(-145, 2000);
+  pusher.extend(); // extend pusher
+  chassis.moveToPose(-26, -34, -169, 4000, {.forwards = true, .maxSpeed = 127}, false);
+  pros::delay(2000);
+  intakeMotor.move(0); // stop intake
+  chassis.moveToPose(-23, -30, -169, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.turnToHeading(-20, 2000, {}, false); // turn to face goal
+  pusher.retract(); // retract pusher
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(0); // stop lift
+  chassis.moveToPose(-24, 36, 0, 2500, {.forwards = true, .maxSpeed = 100}, false);
+  intakeMotor.move(-127); // start intake in
+}
 
+void redRight() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(0, 22.5, 0, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.moveToPose(0, 36, 0, 3000, {.forwards = true, .maxSpeed = 70}, false);
+  chassis.turnToHeading(145, 2000); // mirrored angle
+  pusher.extend(); // extend pusher
+  chassis.moveToPose(26, -34, 169, 4000, {.forwards = true, .maxSpeed = 127}, false); // mirrored X and heading
+  pros::delay(2000);
+  intakeMotor.move(0); // stop intake
+  chassis.moveToPose(23, -30, 169, 2000, {.forwards = true, .maxSpeed = 127}, false); // mirrored X and heading
+  chassis.turnToHeading(20, 2000, {}, false); // mirrored angle
+  pusher.retract(); // retract pusher
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(0); // stop lift
+  chassis.moveToPose(24, 36, 0, 2500, {.forwards = true, .maxSpeed = 100}, false); // mirrored X
+  intakeMotor.move(-127); // start intake in
+}
+
+void blueLeft() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(0, 22.5, 0, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.moveToPose(0, 36, 0, 3000, {.forwards = true, .maxSpeed = 70}, false);
+  chassis.turnToHeading(-145, 2000);
+  pusher.extend(); // extend pusher
+  chassis.moveToPose(-26, -34, -169, 4000, {.forwards = true, .maxSpeed = 127}, false);
+  pros::delay(2000);
+  intakeMotor.move(0); // stop intake
+  chassis.moveToPose(-23, -30, -169, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.turnToHeading(-20, 2000, {}, false); // turn to face goal
+  pusher.retract(); // retract pusher
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(0); // stop lift
+  chassis.moveToPose(-24, 36, 0, 2500, {.forwards = true, .maxSpeed = 100}, false);
+  intakeMotor.move(-127); // start intake in
+}
+
+void blueRight() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(0, 22.5, 0, 2000, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.moveToPose(0, 36, 0, 3000, {.forwards = true, .maxSpeed = 70}, false);
+  chassis.turnToHeading(145, 2000); // mirrored angle
+  pusher.extend(); // extend pusher
+  chassis.moveToPose(26, -34, 169, 4000, {.forwards = true, .maxSpeed = 127}, false); // mirrored X and heading
+  pros::delay(2000);
+  intakeMotor.move(0); // stop intake
+  chassis.moveToPose(23, -30, 169, 2000, {.forwards = true, .maxSpeed = 127}, false); // mirrored X and heading
+  chassis.turnToHeading(20, 2000, {}, false); // mirrored angle
+  pusher.retract(); // retract pusher
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(0); // stop lift
+  chassis.moveToPose(24, 36, 0, 2500, {.forwards = true, .maxSpeed = 100}, false); // mirrored X
+  intakeMotor.move(-127); // start intake in
+}
+
+void autonTest() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  chassis.moveToPose(0, 12, 0, 2500, {.forwards = true, .maxSpeed = 80}, false);
+  chassis.turnToHeading(90, 1200);
+  chassis.turnToHeading(0, 1200);
+  chassis.moveToPose(0, 0, 0, 2500, {.forwards = true}, false);
+}
 
 void autonomous() {
-    
-    chassis.turnToHeading(90, 2999);
+  chassis.setPose(0, 0, 0); // reset odometry
+  liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); // set lift brake mode to hold
+
+  redLeft(); // run red left autonomous routine
+  //redRight(); // run red right autonomous routine
+  //blueLeft(); // run blue left autonomous routine
+  //blueRight(); // run blue right autonomous routine
+  //autonTest(); // run auton test routine
+  //skillsAuton(); // run skills autonomous routine
 }
 
 #pragma endregion autoncallback

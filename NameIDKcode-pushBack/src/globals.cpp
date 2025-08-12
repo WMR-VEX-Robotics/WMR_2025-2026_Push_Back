@@ -17,10 +17,13 @@ pros::Motor liftMotor(7, pros::v5::MotorGears::red);
 //pneumatics
 pros::adi::Pneumatics odom('D', true);
 pros::adi::Pneumatics pto('E', false);
-pros::adi::Pneumatics pusher('F', true);
+pros::adi::Pneumatics pusher('F', false);
 
 // Inertial Sensor on port 17
 pros::Imu imu(17);
+
+//lift rotational sensor
+pros::Rotation liftRotationSensor(1);
 
 //Color Sensor 
 //pros::Optical colorSensor(2);

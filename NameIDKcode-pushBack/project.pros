@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Maven-pushBackTest",
+    "project_name": "Maven-pushBackNEWPC",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -297,7 +297,9 @@
         "version": "8.3.8"
       }
     },
-    "upload_options": {},
+    "upload_options": {
+      "slot": 2
+    },
     "use_early_access": false
   }
 }
