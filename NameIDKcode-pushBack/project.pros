@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Maven-pushBackNEWPC",
+    "project_name": "MavenRedLeft2",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -298,7 +298,8 @@
       }
     },
     "upload_options": {
-      "slot": 2
+      "slot": 1,
+      "icon": "X"
     },
     "use_early_access": false
   }

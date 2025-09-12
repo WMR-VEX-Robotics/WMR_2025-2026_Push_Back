@@ -26,7 +26,7 @@ pros::Imu imu(17);
 pros::Rotation liftRotationSensor(1);
 
 //Color Sensor 
-//pros::Optical colorSensor(2);
+pros::Optical colorSensor(2);
 
 //distance sensor
 //pros::Distance distanceSensor(12);

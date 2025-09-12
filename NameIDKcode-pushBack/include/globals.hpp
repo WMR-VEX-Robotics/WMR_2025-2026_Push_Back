@@ -25,7 +25,7 @@ extern pros::adi::Pneumatics pusher;
 extern pros::Imu imu;
 
 //Color Sensor
-//extern pros::Optical colorSensor;
+extern pros::Optical colorSensor;
 
 //distance sensor
 //extern pros::Distance distanceSensor;

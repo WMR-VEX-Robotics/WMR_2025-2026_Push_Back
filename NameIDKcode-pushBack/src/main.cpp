@@ -27,28 +27,32 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
 );
 
 // lateral PID controller
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              3, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
-                                              20 // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller(
+  6.25,   // proportional gain (kP) - start lower for stability
+  0,   // integral gain (kI) - keep at 0 for now
+  0.8,   // derivative gain (kD) - start low
+  0,   // anti windup
+  1,   // small error range, in inches
+  100, // small error range timeout, in milliseconds
+  3,   // large error range, in inches
+  500, // large error range timeout, in milliseconds
+  20   // maximum acceleration (slew)
 );
 
-// angular PID controller
-lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              10, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in degrees
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in degrees
-                                              500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+// angular PID controller (unchanged for now)
+lemlib::ControllerSettings angular_controller(
+  0.95,   // proportional gain (kP)
+  0.0006,   // integral gain (kI)
+  0.4,  // derivative gain (kD)
+  1,   // anti windup
+  1,   // small error range, in degrees
+  100, // small error range timeout, in milliseconds
+  3,   // large error range, in degrees
+  500, // large error range timeout, in milliseconds
+  20    // maximum acceleration (slew)
 );
+
+lemlib::PID pid(1, 1, 1, 1, false);
 
 // sensors for odometry
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
@@ -69,6 +73,8 @@ lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
                                   10, // minimum output where drivetrain will move out of 127
                                   1.019 // expo curve gain
 );
+
+
 
 // create the chassis
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttleCurve, &steerCurve);
@@ -172,23 +178,29 @@ void toggle_pto(){                  //pto
 #pragma region autoncallback
 
 void redLeft() {
-  chassis.setPose(0, 0, 0); // reset odometry
+  chassis.setPose(0, 0, -10); // reset odometry
   intakeMotor.move(127); // start intake
-  chassis.moveToPose(0, 22.5, 0, 2000, {.forwards = true, .maxSpeed = 127}, false);
-  chassis.moveToPose(0, 36, 0, 3000, {.forwards = true, .maxSpeed = 70}, false);
-  chassis.turnToHeading(-145, 2000);
+  chassis.moveToPose(-6, 16.5, -10, 1500, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.moveToPose(-6, 32, -10, 1500, {.forwards = true, .maxSpeed = 50}, false);
+  chassis.turnToHeading(-70, 1000);
   pusher.extend(); // extend pusher
-  chassis.moveToPose(-26, -34, -169, 4000, {.forwards = true, .maxSpeed = 127}, false);
-  pros::delay(2000);
-  intakeMotor.move(0); // stop intake
-  chassis.moveToPose(-23, -30, -169, 2000, {.forwards = true, .maxSpeed = 127}, false);
-  chassis.turnToHeading(-20, 2000, {}, false); // turn to face goal
+  chassis.moveToPose(-100, -17, -70, 1500, {.forwards = true, .maxSpeed = 127}, false);
+  chassis.turnToHeading(182, 1000, {}, false);
+  chassis.moveToPose(-28, -55, 182, 1500, {.forwards = true, .maxSpeed = 127}, false);
+  //for (int i = 0; i < 3; i++)
+  //{
+    //chassis.moveToPose(-28, -37, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    //chassis.moveToPose(-28, -43, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
+  //}
+  pros::delay(300);
+  chassis.moveToPose(-28, -10, 182, 1200, {.forwards = false, .maxSpeed = 127}, false);
   pusher.retract(); // retract pusher
+  chassis.turnToHeading(0, 1000, {}, false); // turn to face goal
   liftMotor.move(127); // lift up
-  pros::delay(1000); // wait for lift to finish
-  liftMotor.move(0); // stop lift
-  chassis.moveToPose(-24, 36, 0, 2500, {.forwards = true, .maxSpeed = 100}, false);
-  intakeMotor.move(-127); // start intake in
+  pros::delay(2000); // wait for lift to finish
+  liftMotor.move(5); // stop lift
+  chassis.moveToPose(-28, 20, 0, 1500, {.forwards = true, .maxSpeed = 127}, false);
+  intakeMotor.move(-127); // start intake out
 }
 
 void redRight() {
@@ -253,14 +265,11 @@ void blueRight() {
 
 void autonTest() {
   chassis.setPose(0, 0, 0); // reset odometry
-  chassis.moveToPose(0, 12, 0, 2500, {.forwards = true, .maxSpeed = 80}, false);
-  chassis.turnToHeading(90, 1200);
-  chassis.turnToHeading(0, 1200);
-  chassis.moveToPose(0, 0, 0, 2500, {.forwards = true}, false);
+  chassis.moveToPose(0, 24, 0, 2000);
+
 }
 
 void autonomous() {
-  chassis.setPose(0, 0, 0); // reset odometry
   liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); // set lift brake mode to hold
 
   redLeft(); // run red left autonomous routine

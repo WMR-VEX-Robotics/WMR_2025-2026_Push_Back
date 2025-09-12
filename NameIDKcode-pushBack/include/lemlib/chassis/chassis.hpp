@@ -925,7 +925,9 @@ class Chassis {
         float distTraveled = 0;
 
         ControllerSettings lateralSettings;
+        public:
         ControllerSettings angularSettings;
+        protected:
         Drivetrain drivetrain;
         OdomSensors sensors;
         DriveCurve* throttleCurve;
