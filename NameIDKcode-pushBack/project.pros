@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "MavenRedLeftTEST",
+    "project_name": "MavenLeft",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -299,8 +299,8 @@
     },
     "upload_options": {
       "slot": 1,
-      "icon": "pizza",
-      "description": "redlefttest"
+      "icon": "X",
+      "description": "left"
     },
     "use_early_access": false
   }

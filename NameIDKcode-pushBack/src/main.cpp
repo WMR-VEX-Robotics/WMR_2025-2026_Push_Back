@@ -28,10 +28,10 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
 
 // lateral PID controller
 lemlib::ControllerSettings lateral_controller(
-  6.25,   // proportional gain (kP) - start lower for stability
-  0,   // integral gain (kI) - keep at 0 for now
-  0.8,   // derivative gain (kD) - start low
-  0,   // anti windup
+  1.7,   // proportional gain (kP) - start lower for stability
+  0.015,   // integral gain (kI) - keep at 0 for now
+  .22,   // derivative gain (kD) - start low
+  25,   // anti windup
   1,   // small error range, in inches
   100, // small error range timeout, in milliseconds
   3,   // large error range, in inches
@@ -41,10 +41,10 @@ lemlib::ControllerSettings lateral_controller(
 
 // angular PID controller (unchanged for now)
 lemlib::ControllerSettings angular_controller(
-  0.95,   // proportional gain (kP)
-  0.0006,   // integral gain (kI)
-  0.4,  // derivative gain (kD)
-  1,   // anti windup
+  .9,   // proportional gain (kP)
+  0,   // integral gain (kI)
+  0.35,  // derivative gain (kD)
+  15,   // anti windup
   1,   // small error range, in degrees
   100, // small error range timeout, in milliseconds
   3,   // large error range, in degrees
@@ -52,7 +52,6 @@ lemlib::ControllerSettings angular_controller(
   20    // maximum acceleration (slew)
 );
 
-lemlib::PID pid(1, 1, 1, 1, false);
 
 // sensors for odometry
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
@@ -204,27 +203,49 @@ void redLeft() {
 }
 
 void redLeftTEST() {
-  chassis.setPose(0, 0, -10); // reset odometry
+  chassis.setPose(0, 0, 0); // reset odometry
   intakeMotor.move(127); // start intake
-  chassis.moveToPose(-6, 16.5, -10, 1500, {.forwards = true, .maxSpeed = 120}, false);
-  chassis.moveToPose(-6, 32, -10, 1500, {.forwards = true, .maxSpeed = 50}, false);
-  chassis.turnToHeading(-70, 1000, {.minSpeed = 127, .earlyExitRange = 3}); // added exit conditions
+  chassis.moveToPose(-12.75, 16.5, -10, 1500, {.forwards = true, .minSpeed = 25}, false);
+  chassis.moveToPose(-12.75, 37, -10, 2000, {.forwards = true, .minSpeed = 30}, false);
   pusher.extend(); // extend pusher
-  chassis.moveToPose(-28, -39, 181, 2000, {.forwards = true, .minSpeed = 115}, false);
+  pros::delay(1000);
+  chassis.turnToHeading(-80, 1000, {.minSpeed = 70, .earlyExitRange = 3}); // added exit conditions
+  chassis.moveToPose(-37.5, -35, 184, 3500, {.forwards = true, .minSpeed = 62}, false);
+  pros::delay(1000);
+  intakeMotor.move(127);
+  chassis.moveToPose(-38, -43, 183.76, 1550, {.forwards = true, .minSpeed = 90}, false);
+  pros::delay(1750);
+  chassis.moveToPose(-28, -30, 180, 1000, {.forwards = false, .minSpeed= 60}, true);
+  intakeMotor.move(-120);
+  pros::delay(900);
+  intakeMotor.move(127);
+  pusher.toggle();
+  chassis.turnToHeading(0, 1000, {.minSpeed = 70}, false);
+  chassis.moveToPose(-34, 5, 0, 1500, {.minSpeed = 80}, false);
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(5); // stop lift
+  chassis.moveToPose(-34, 30, 0, 1300, {.forwards = true, .minSpeed = 100}, true);
+  intakeMotor.move(-127); // start intake out*/
+
+
+  //chassis.turnToHeading(180,1000);
+  /*chassis.moveToPose(-28, -33, -180, 3000, {.forwards = true, .minSpeed = 62}, false);
   //for (int i = 0; i < 3; i++)
   //{
     //chassis.moveToPose(-28, -37, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
     //chassis.moveToPose(-28, -43, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
   //}
-  pros::delay(300);
-  chassis.moveToPose(-28, -10, 182, 1200, {.forwards = false, .minSpeed = 127}, false);
+  pros::delay(3000);
+  intakeMotor.move(0);
+  /*chassis.moveToPose(-30, -25, 181, 1200, {.forwards = false, .minSpeed = 127}, false);
   pusher.retract(); // retract pusher
   chassis.turnToHeading(0, 1000, {.minSpeed = 127}, false); // turn to face goal
   liftMotor.move(127); // lift up
   pros::delay(1600); // wait for lift to finish
   liftMotor.move(5); // stop lift
   chassis.moveToPose(-28, 20, 0, 1300, {.forwards = true, .minSpeed = 127}, false);
-  intakeMotor.move(-127); // start intake out
+  intakeMotor.move(-127); // start intake out*/
 }
 
 void redRight() {
@@ -254,27 +275,98 @@ void redRight() {
 }
 
 void redRightTEST() {
-  chassis.setPose(0, 0, 10); // reset odometry (flipped angle)
+  chassis.setPose(0, 0, 0); // reset odometry
   intakeMotor.move(127); // start intake
-  chassis.moveToPose(6, 16.5, 10, 1500, {.forwards = true, .maxSpeed = 120}, false); // flipped X and angle
-  chassis.moveToPose(6, 32, 10, 1500, {.forwards = true, .maxSpeed = 50}, false); // flipped X and angle
-  chassis.turnToHeading(70, 1000, {.minSpeed = 127, .earlyExitRange = 3}); // flipped angle
+  chassis.moveToPose(12.75, 16.5, 10, 1500, {.forwards = true, .minSpeed = 25}, false); // flipped X and angle
+  chassis.moveToPose(12.75, 37, 10, 2000, {.forwards = true, .minSpeed = 30}, false); // flipped X and angle
   pusher.extend(); // extend pusher
-  chassis.moveToPose(28, -39, -181, 2000, {.forwards = true, .minSpeed = 115}, false); // flipped X and angle
+  pros::delay(1000);
+  chassis.turnToHeading(80, 1000, {.minSpeed = 70, .earlyExitRange = 3}); // flipped angle
+  chassis.moveToPose(37.5, -35, -184, 3500, {.forwards = true, .minSpeed = 62}, false); // flipped X and angle
+  pros::delay(1000);
+  intakeMotor.move(127);
+  //chassis.moveToPose(38, -43, -183.76, 1550, {.forwards = true, .minSpeed = 90}, false); // flipped X and angle
+  pros::delay(1000);
+  chassis.moveToPose(38, -18, -180, 1000, {.forwards = false, .minSpeed= 60}, true); // flipped X and angle
+  intakeMotor.move(-120);
+  pros::delay(900);
+  intakeMotor.move(127);
+  pusher.toggle();
+  chassis.turnToHeading(30, 1000, {.minSpeed = 70}); // flipped angle
+  pros::delay(1200);
+  chassis.moveToPose(34, 8, 0, 1500, {.minSpeed = 80}, true); // flipped X
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(5); // stop lift
+  chassis.moveToPose(34, 30, 0, 1300, {.forwards = true, .minSpeed = 100}, false); // flipped X
+  intakeMotor.move(-127); // start intake out
+}
+
+void redRightELIM() {
+    chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(6, 16, -10, 1500, {.forwards = true, .minSpeed = 25}, false);
+  chassis.moveToPose(10, 29, -10, 2000, {.forwards = true, .minSpeed = 30}, false);
+  chassis.moveToPose(-18, 34.5, -41, 2000, {.forwards = true, .minSpeed = 30}, false);
+  intakeMotor.move(-80);
+  /*pusher.extend(); // extend pusher
+  pros::delay(1000);
+  chassis.turnToHeading(-80, 1000, {.minSpeed = 70, .earlyExitRange = 3}); // added exit conditions
+  chassis.moveToPose(37.5, -35, 184, 3500, {.forwards = true, .minSpeed = 62}, false);
+  pros::delay(1000);
+  intakeMotor.move(127);
+  chassis.moveToPose(38, -43, 183.76, 1550, {.forwards = true, .minSpeed = 90}, false);
+  for(int i = 0; i < 4; i++) {
+    chassis.moveToPose(37.5, -43, 183.2, 250, {.forwards = true, .minSpeed = 90}, false);
+    chassis.moveToPose(37.5, -40, 183.2, 250, {.forwards = true, .minSpeed = 90}, false);
+  }
+  chassis.moveToPose(30, -30, 180, 1000, {.forwards = false, .minSpeed= 60}, true);
+  intakeMotor.move(-120);
+  pros::delay(900);
+  intakeMotor.move(127);
+  pusher.toggle();
+  chassis.turnToHeading(20, 1000, {.minSpeed = 70});
+  pros::delay(1200);
+  chassis.moveToPose(34, 8, 0, 1500, {.minSpeed = 80}, false);
+  liftMotor.move(127); // lift up
+  pros::delay(1000); // wait for lift to finish
+  liftMotor.move(5); // stop lift
+  chassis.moveToPose(34, 30, 0, 1300, {.forwards = true, .minSpeed = 100}, true);
+  intakeMotor.move(-127); // start intake out
+
+
+  //chassis.turnToHeading(180,1000);
+  chassis.moveToPose(-28, -33, -180, 3000, {.forwards = true, .minSpeed = 62}, false);
   //for (int i = 0; i < 3; i++)
   //{
-    //chassis.moveToPose(28, -37, -182, 1000, {.forwards = true, .maxSpeed = 127}, false);
-    //chassis.moveToPose(28, -43, -182, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    //chassis.moveToPose(-28, -37, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    //chassis.moveToPose(-28, -43, 182, 1000, {.forwards = true, .maxSpeed = 127}, false);
   //}
-  pros::delay(300);
-  chassis.moveToPose(28, -10, -182, 1200, {.forwards = false, .minSpeed = 127}, false); // flipped X and angle
+  pros::delay(3000);
+  intakeMotor.move(0);
+  chassis.moveToPose(-30, -25, 181, 1200, {.forwards = false, .minSpeed = 127}, false);
   pusher.retract(); // retract pusher
-  chassis.turnToHeading(0, 1000, {.minSpeed = 127}, false); // turn to face goal (no flip needed)
+  chassis.turnToHeading(0, 1000, {.minSpeed = 127}, false); // turn to face goal
   liftMotor.move(127); // lift up
   pros::delay(1600); // wait for lift to finish
   liftMotor.move(5); // stop lift
-  chassis.moveToPose(28, 20, 0, 1300, {.forwards = true, .minSpeed = 127}, false); // flipped X
-  intakeMotor.move(-127); // start intake
+  chassis.moveToPose(-28, 20, 0, 1300, {.forwards = true, .minSpeed = 127}, false);
+  intakeMotor.move(-127); // start intake out*/
+}
+
+void redRightSKIPLOADER() {
+  chassis.setPose(0, 0, 0); // reset odometry
+  intakeMotor.move(127); // start intake
+  chassis.moveToPose(8, 16, 10, 2500, {.forwards = true, .minSpeed = 25}, false);
+  chassis.moveToPose(11, 36, 0, 2750, {.forwards = true, .minSpeed = 30}, false);
+  chassis.moveToPose(4, 0, 17, 2000, {.forwards = false, .minSpeed = 50}, false);
+  chassis.moveToPose(37, 10, 0, 2500, {.forwards = true, .minSpeed = 50}, false);
+  liftMotor.move(127); // lift up
+  pros::delay(2000);
+  liftMotor.move(5); // stop lift
+  chassis.turnToHeading(0, 1000, {.minSpeed = 40}, false);
+  chassis.moveToPose(34, 30, 0, 1500, {.forwards = true, .minSpeed = 50}, false);
+  intakeMotor.move(-127); // start intake out
 }
 
 void blueLeft() {
@@ -360,7 +452,7 @@ void blueRightTEST() {
   chassis.moveToPose(6, 32, 10, 1500, {.forwards = true, .maxSpeed = 50}, false); // flipped X and angle
   chassis.turnToHeading(70, 1000, {.minSpeed = 127, .earlyExitRange = 3}); // flipped angle
   pusher.extend(); // extend pusher
-  chassis.moveToPose(28, -39, -181, 2000, {.forwards = true, .minSpeed = 115}, false); // flipped X and angle
+  chassis.moveToPose(28, -41, -178, 2000, {.forwards = true, .minSpeed = 115}, false); // flipped X and angle
   //for (int i = 0; i < 3; i++)
   //{
     //chassis.moveToPose(28, -37, -182, 1000, {.forwards = true, .maxSpeed = 127}, false);
@@ -379,7 +471,8 @@ void blueRightTEST() {
 
 void autonTest() {
   chassis.setPose(0, 0, 0); // reset odometry
-  chassis.moveToPose(0, 24, 0, 2000);
+  //chassis.moveToPose(0, 48, 0, 5000, {});
+  //pros::delay(4000);
 }
 
 void autonomous() {
@@ -389,12 +482,14 @@ void autonomous() {
   redLeftTEST(); // run red left autonomous routine test
   //redRight(); // run red right autonomous routine
   //redRightTEST(); // run red right autonomous routine test
+  //redRightELIM();
   //blueLeft(); // run blue left autonomous routine
   //blueLeftTEST(); // run blue left autonomous routine test
   //blueRight(); // run blue right autonomous routine
   //blueRightTEST(); // run blue right autonomous routine test
   //autonTest(); // run auton test routine
   //skillsAuton(); // run skills autonomous routine
+  //redRightSKIPLOADER();
 }
 
 #pragma endregion autoncallback
